@@ -10,7 +10,7 @@ function updateDate() {
   dateEl.textContent = now.toLocaleString('da-DK', { dateStyle: 'full', timeStyle: 'short' });
 }
 updateDate();
-setInterval(updateDate, 1000); // opdater hvert sekund
+setInterval(updateDate, 1000);
 
 // --- Hent data fra Google Sheet JSON ---
 async function fetchSheet(sheetName) {
@@ -28,7 +28,7 @@ const rowsPerPage = 10;
 
 async function updateOrders() {
   ordreData = await fetchSheet("Ordreoversigt");
-  showPage(); // vis første side
+  showPage();
 }
 
 function showPage() {
@@ -56,7 +56,7 @@ function showPage() {
 
   currentPage++;
   if (currentPage * rowsPerPage >= ordreData.length) {
-    currentPage = 0; // start forfra
+    currentPage = 0;
   }
 }
 
@@ -64,7 +64,7 @@ function showPage() {
 async function updateTasks() {
   const tasks = await fetchSheet("Arbejdsoversigt");
   const tasksBody = document.querySelector("#tasks tbody");
-  if (!tasksBody) return; // hvis tabellen ikke findes
+  if (!tasksBody) return;
   tasksBody.innerHTML = "";
   tasks.forEach(row => {
     if (row[0] && row[1]) {
@@ -84,7 +84,7 @@ async function updateScreen() {
 // Første opdatering
 updateScreen();
 
-// Skift side i Ordreoversigt hvert 30. sekund (juster efter behov)
+// Skift side i Ordreoversigt hvert 30. sekund
 setInterval(showPage, 30 * 1000);
 
 // Opdater hele skærmen fra Google Sheets hvert 10. minut
@@ -121,11 +121,16 @@ async function hentVejr() {
     const desc = data.weather[0].description;
     const icon = data.weather[0].icon;
 
+    // Kun by, temperatur og beskrivelse vises
     document.getElementById("city").innerText = CITY;
     document.getElementById("temp").innerText = `${temp}°C`;
     document.getElementById("desc").innerText = desc;
     document.getElementById("weather-icon").src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
     document.getElementById("weather-icon").alt = desc;
+
+    // Fjern evt. klokkeslæt fra forecast, hvis det findes
+    const forecastTimes = document.querySelectorAll(".forecast-time, .time");
+    forecastTimes.forEach(el => el.remove());
 
   } catch (err) {
     console.error(err);
@@ -137,4 +142,4 @@ async function hentVejr() {
 
 // Opdater vejret én gang og derefter hvert 10. minut
 hentVejr();
-setInterval(hentVejr, 1 * 60 * 1000);
+setInterval(hentVejr, 10 * 60 * 1000);
