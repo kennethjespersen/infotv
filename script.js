@@ -1,4 +1,4 @@
-// ---- INDSTIL DIT SHEET-ID HER ----
+// ---- INDSTIL DIT SHEET-ID OG VEJR ----
 const SHEET_ID = "1oZCqUjYE54ePWnpYqARtklEBBq1wwl3dKOyF2TmcCtU";
 const CITY = "Lunderskov";
 const WEATHER_API_KEY = "1479d27b5af8ba5ba10105874505ff92";
@@ -21,7 +21,7 @@ async function fetchSheet(sheetName) {
   return json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
 }
 
-// --- Pagination for Ordreoversigt ---
+// --- Ordreoversigt med pagination ---
 let ordreData = [];
 let currentPage = 0;
 const rowsPerPage = 10;
@@ -75,7 +75,7 @@ async function updateTasks() {
   });
 }
 
-// --- Opdater skærm ---
+// --- Opdater hele skærmen ---
 async function updateScreen() {
   await updateOrders();
   await updateTasks();
@@ -84,8 +84,8 @@ async function updateScreen() {
 // Første opdatering
 updateScreen();
 
-// Skift side i Ordreoversigt hvert 2. minut
-setInterval(showPage, 2 * 60 * 1000);
+// Skift side i Ordreoversigt hvert 30. sekund (juster efter behov)
+setInterval(showPage, 30 * 1000);
 
 // Opdater hele skærmen fra Google Sheets hvert 10. minut
 setInterval(updateScreen, 10 * 60 * 1000);
@@ -135,5 +135,6 @@ async function hentVejr() {
   }
 }
 
+// Opdater vejret én gang og derefter hvert 10. minut
 hentVejr();
-setInterval(hentVejr, 1 * 60 * 1000); // opdater hvert 10. minut
+setInterval(hentVejr, 10 * 60 * 1000);
