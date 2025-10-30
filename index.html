@@ -5,125 +5,147 @@
 <title>Infoskærm</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  /* --- Vejr + dato/klokke øverst i højre hjørne --- */
+  body { background:#222; color:white; font-family: Arial, sans-serif; }
+  header img { height:100px; width:auto; }
+
   #top-right-weather {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    text-align: right;
-    color: white;
-    font-family: Arial, sans-serif;
-    background: rgba(0,0,0,0.3);
-    padding: 15px;
-    border-radius: 8px;
-    min-width: 200px;
+    position:absolute;
+    top:20px;
+    right:20px;
+    text-align:right;
+    padding:0;
+    min-width:200px;
   }
-  #top-right-weather h3, #top-right-weather p {
-    margin: 2px 0;
-  }
-  /* --- Vejr-info med ikon --- */
-  #weather-info {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-  #weather-icon {
-    width: 50px;
-    height: 50px;
-  }
+  #top-right-weather p { margin:2px 0; }
+  #top-right-weather .weatherwidget-io { width:220px; display:block; margin:0 auto; }
+
+  .container { margin-top:120px; padding:20px; }
+  table { width:100%; border-collapse: collapse; }
+  th, td { border:1px solid #fff; padding:5px; text-align:left; }
+
+  #nyheder { margin-top:20px; height:150px; overflow:hidden; border:1px solid #fff; padding:10px; }
+  #nyheder p { margin:5px 0; }
 </style>
 </head>
-
 <body>
-  <header>
-    <img src="logo.svg" alt="Logo" id="logo.svg" style="height:100px; width:auto;">
-    <!-- gammel dato/klokke fjernet -->
-  </header>
-  
-  <div class="container">
-    <section id="ordreoversigt">
-      <h2>Ordreoversigt</h2>
-      <table id="schedule">
-        <thead>
-          <tr>
-            <th>Ordrenummer</th>
-            <th>Beskrivelse</th>
-            <th>Kunde</th>
-            <th>Ansvarlig</th>
-            <th>Leveringsdato</th>
-            <th>Klar</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
+<header>
+  <img src="logo.svg" alt="Logo">
+</header>
 
-    <div id="nyheder-wrapper">
-      <div id="forecast"></div> <!-- 5-dages vejrprognose kan indsættes her senere -->
-      <div id="nyheder">Indlæser nyheder...</div>
-    </div>
+<!-- Øverste højre hjørne: klokke + vejr -->
+<div id="top-right-weather">
+  <p id="clock">Indlæser klokke...</p>
+  <a class="weatherwidget-io" 
+     href="https://forecast7.com/en/55d50n9d33/lunderskov/" 
+     data-label_1="LUNDERSKOV" 
+     data-label_2="VEJR" 
+     data-theme="dark">
+     LUNDERSKOV VEJR
+  </a>
+</div>
+
+<div class="container">
+  <!-- Ordreoversigt -->
+  <section id="ordreoversigt">
+    <h2>Ordreoversigt</h2>
+    <table id="schedule">
+      <thead>
+        <tr>
+          <th>Ordrenummer</th>
+          <th>Beskrivelse</th>
+          <th>Kunde</th>
+          <th>Ansvarlig</th>
+          <th>Leveringsdato</th>
+          <th>Klar</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- Nyheder -->
+  <div id="nyheder-wrapper">
+    <h2>Nyheder</h2>
+    <div id="nyheder">Indlæser nyheder...</div>
   </div>
+</div>
 
-  <!-- Vejr + dato/klokke øverst i højre hjørne -->
-  <div id="top-right-weather">
-    <p id="clock">Indlæser klokke...</p>
-    <div id="weather-info">
-      <div>
-        <h3 id="city">Lunderskov</h3>
-        <p id="temp">Indlæser vejr...</p>
-        <p id="desc"></p>
-      </div>
-      <img id="weather-icon" src="" alt="">
-    </div>
-  </div>
+<script>
+const SHEET_ID = "1oZCqUjYE54ePWnpYqARtklEBBq1wwl3dKOyF2TmcCtU";
 
-  <script src="script.js"></script>
+// --- Live dato og klokke ---
+function updateClock() {
+  const now = new Date();
+  const options = { weekday:'short', day:'2-digit', month:'short', year:'numeric' };
+  const date = now.toLocaleDateString('da-DK', options);
+  const time = now.toLocaleTimeString('da-DK', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  document.getElementById("clock").innerText = `${date} | ${time}`;
+}
+updateClock();
+setInterval(updateClock, 1000);
 
-  <!-- Vejr + klokke script -->
-  <script>
-    const apiKey = "1479d27b5af8ba5ba10105874505ff92"; // din OpenWeather nøgle
-    const city = "Lunderskov";
+// --- Hent Google Sheets JSON ---
+async function fetchSheet(sheetName) {
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+    const res = await fetch(url);
+    const text = await res.text();
+    const json = JSON.parse(text.substring(47, text.length - 2));
+    return json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
+  } catch(err) {
+    console.error(`Kan ikke hente arket ${sheetName}:`, err);
+    return [];
+  }
+}
 
-    // --- Hent vejr i Lunderskov ---
-    async function hentVejr() {
-      try {
-        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=da&appid=${apiKey}`);
-        if (!res.ok) throw new Error("API-fejl");
-        const data = await res.json();
-
-        const temp = Math.round(data.main.temp);
-        const desc = data.weather[0].description;
-        const icon = data.weather[0].icon;
-
-        document.getElementById("city").innerText = city;
-        document.getElementById("temp").innerText = `${temp}°C`;
-        document.getElementById("desc").innerText = desc;
-        document.getElementById("weather-icon").src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
-        document.getElementById("weather-icon").alt = desc;
-
-      } catch(err) {
-        console.error(err);
-        document.getElementById("temp").innerText = "Kunne ikke hente vejr 🌧️";
-        document.getElementById("desc").innerText = "";
-        document.getElementById("weather-icon").src = "";
-      }
+// --- Opdater ordreoversigt ---
+async function updateOrders() {
+  const rows = await fetchSheet("Ordreoversigt");
+  const tbody = document.querySelector("#schedule tbody");
+  tbody.innerHTML = "";
+  rows.forEach(r => {
+    if(r[0]) { // mindst første kolonne
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${r[0]||""}</td>
+        <td>${r[1]||""}</td>
+        <td>${r[2]||""}</td>
+        <td>${r[3]||""}</td>
+        <td>${r[4]||""}</td>
+        <td>${r[5]||""}</td>
+      `;
+      tbody.appendChild(tr);
     }
+  });
+}
 
-    hentVejr();
-    setInterval(hentVejr, 10*60*1000); // opdater hvert 10. minut
+// --- Opdater nyheder ---
+async function updateNews() {
+  const rows = await fetchSheet("Nyheder");
+  const nyhederDiv = document.getElementById("nyheder");
+  if(rows.length>0){
+    nyhederDiv.innerHTML = rows.map(r => `<p>${r[0]}</p>`).join("");
+  } else {
+    nyhederDiv.innerText = "Kan ikke indlæse nyheder.";
+  }
+}
 
-    // --- Opdater dato og klokkeslæt ---
-    function opdaterKlokke() {
-      const now = new Date();
-      const options = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
-      const dato = now.toLocaleDateString('da-DK', options);
-      const tid = now.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      document.getElementById("clock").innerText = `${dato} | ${tid}`;
-    }
+// --- Kør alt efter DOM er klar ---
+document.addEventListener("DOMContentLoaded", () => {
+  updateOrders();
+  updateNews();
+  setInterval(() => { updateOrders(); updateNews(); }, 120000);
+});
 
-    opdaterKlokke();
-    setInterval(opdaterKlokke, 1000); // opdater hvert sekund
-  </script>
+// --- Weatherwidget.io script ---
+!function(d,s,id){
+  var js,fjs=d.getElementsByTagName(s)[0];
+  if(!d.getElementById(id)){
+    js=d.createElement(s);js.id=id;
+    js.src='https://weatherwidget.io/js/widget.min.js';
+    fjs.parentNode.insertBefore(js,fjs);
+  }
+}(document,'script','weatherwidget-io-js');
+</script>
 </body>
 </html>
