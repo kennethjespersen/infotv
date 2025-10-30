@@ -19,30 +19,51 @@ async function fetchSheet(sheetName) {
   return json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
 }
 
-// Opdater skærm
-async function updateScreen() {
-  // Ordreoversigt
-  const ordreoversigt = await fetchSheet("Ordreoversigt");
+// --- Pagination for Ordreoversigt ---
+let ordreData = [];
+let currentPage = 0;
+const rowsPerPage = 10;
+
+async function updateOrders() {
+  ordreData = await fetchSheet("Ordreoversigt");
+  showPage(); // vis første side
+}
+
+function showPage() {
   const scheduleBody = document.querySelector("#schedule tbody");
   scheduleBody.innerHTML = "";
-  ordreoversigt.forEach(row => {
+
+  const start = currentPage * rowsPerPage;
+  const end = start + rowsPerPage;
+  const pageRows = ordreData.slice(start, end);
+
+  pageRows.forEach(row => {
     if (row[0] && row[1] && row[2] && row[3] && row[4]) {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-      <td>${row[0]}</td>
-      <td>${row[1]}</td>
-      <td>${row[2]}</td>
-      <td>${row[3]}</td>
-      <td>${row[4]}</td>
-      <td>${row[5] ? row[5] : ""}</td> <!-- Klar -->
-    `;
-    scheduleBody.appendChild(tr);
-  }
-});
+        <td>${row[0]}</td>
+        <td>${row[1]}</td>
+        <td>${row[2]}</td>
+        <td>${row[3]}</td>
+        <td>${row[4]}</td>
+        <td>${row[5] ? row[5] : ""}</td>
+      `;
+      scheduleBody.appendChild(tr);
+    }
+  });
 
-  // Arbejdsoversigt
+  // Næste side for næste opdatering
+  currentPage++;
+  if (currentPage * rowsPerPage >= ordreData.length) {
+    currentPage = 0; // start forfra
+  }
+}
+
+// --- Arbejdsoversigt ---
+async function updateTasks() {
   const tasks = await fetchSheet("Arbejdsoversigt");
   const tasksBody = document.querySelector("#tasks tbody");
+  if (!tasksBody) return; // hvis tabellen ikke findes
   tasksBody.innerHTML = "";
   tasks.forEach(row => {
     if (row[0] && row[1]) {
@@ -53,11 +74,22 @@ async function updateScreen() {
   });
 }
 
-// Første opdatering og derefter hvert 2. minut
-updateScreen();
-setInterval(updateScreen, 120000);
+// --- Opdater skærm ---
+async function updateScreen() {
+  await updateOrders();
+  await updateTasks();
+}
 
-// Rullende nyheder
+// Første opdatering
+updateScreen();
+
+// Skift side i Ordreoversigt hvert 2. minut
+setInterval(showPage, 2 * 60 * 1000);
+
+// Opdater hele skærmen fra Google Sheets hvert 10. minut
+setInterval(updateScreen, 10 * 60 * 1000);
+
+// --- Rullende nyheder ---
 const sheetName = "Nyheder";
 const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
 
