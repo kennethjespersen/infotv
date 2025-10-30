@@ -1,88 +1,72 @@
-/* --- Basis --- */
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
+body {
   font-family: Arial, sans-serif;
   background: #f8f8f8;
   color: #333;
-  font-size: 2vh; /* skalerer med skærmhøjde */
+  margin: 0;
+  padding: 0;
 }
 
-/* --- Header med vejr og klokke --- */
 header {
-  display: flex;
-  align-items: center;            /* Vertikal centrering */
-  justify-content: space-between;  /* Logo til venstre, vejr/klokke til højre */
+  display: flex;	/* gør header til fleksibel container */
+  align-items: center;    /* centrerer vertikalt */
+  justify-content: space-between; /* logo til venstre, andre elementer til højre */
+  padding: 50px 50px;	 /* afstand fra kant: top/bund 15px, venstre/højre 30px */
   background: #042234;
   color: white;
-  padding: 1vh 2vw;
-  position: relative;
+  text-align: center;
+  padding: 0px 20;
 }
 
-/* --- Logo --- */
-#logo {
-  max-height: 8vh; /* logo skalerer med højde */
-  width: auto;
+#arbejdsoversigt {
+  width: 300px;           /* total bredde på tabellen, kan justeres */
+  border-collapse: collapse;
 }
 
-/* --- Vejr + dato/klokke i header --- */
-#top-right-weather {
-  display: flex;
-  align-items: center;
-  gap: 1vw; /* afstand mellem dato/klokke og vejr */
-  background: rgba(0,0,0,0.3);
-  padding: 0.5vh 1vw;
-  border-radius: 5px;
+#arbejdsoversigt th,
+arbejdsoversigt td {
+  width: 10%;             /* begge kolonner tager halvdelen af tabellen */
+  border: 1px solid #ccc;
+  padding: 5px;
+  text-align: left;
+  font-size: 14px;        /* mindre tekst, hvis ønsket */
+}
+
+footer {
+  padding: 10px 20px;
+  background: #042234;
   color: white;
-  font-size: 2vh; /* skalerer med skærmhøjde */
+  text-align: center;
+  padding: 20px 0;
 }
 
-#top-right-weather div {
-  display: flex;
-  flex-direction: column;
-  text-align: right;
+#logo {
+  height: 20px;        /* Juster størrelsen på logoet */
+  display: block;
+  width: auto;
+  margin: 0 auto;       /* Center logoet */
 }
 
-#weather-icon {
-  width: 4vh;  /* passer til header-højden */
-  height: 4vh;
-}
-
-#clock {
-  margin: 0;
-  white-space: nowrap;
-  font-size: 2vh;
-}
-
-/* --- Container og sektioner --- */
 .container {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-around;
-  padding: 2vh 2vw;
+  padding: 20px;
 }
 
 section {
-  flex: 1 1 45%;
-  min-width: 400px; /* sikrer at tabeller ikke bliver for små */
-  margin: 1vh 1vw;
+  width: 45%;
 }
 
-/* --- Tabeller --- */
 table {
   width: 100%;
   border-collapse: collapse;
   background-color: #fff;
-  margin-bottom: 2vh;
-  box-shadow: 0 0 1vh rgba(0,0,0,0.1);
-  font-size: 2vh; /* skalerer med højde */
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 th, td {
   border: 1px solid #ccc;
-  padding: 1vh;
+  padding: 8px 12px;
   text-align: left;
 }
 
@@ -93,23 +77,30 @@ th {
 
 #schedule th:last-child,
 #schedule td:last-child {
-  width: 8vw;   /* skalerer med skærmbredde */
-  text-align: center;
+  width: 80px;   /* juster efter behov */
+  text-align: center; /* evt. centrér indholdet */
 }
 
-/* --- Nyheder nederst --- */
+#news {
+  padding-left: 10px;
+}
+
+#news div {
+  margin: 5px 0;
+}
+
 #nyheder-wrapper {
-  position: fixed;
+  position: fixed;          /* holder nyhederne i bunden */
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 5vh; /* højde skalerer med skærm */
+  height: 40px;
   background-color: #042234;
   color: white;
+  overflow: hidden;
   display: flex;
   align-items: center;
-  overflow: hidden;
-  padding-left: 1vw;
+  padding-left: 10px;
 }
 
 #nyheder {
@@ -117,26 +108,9 @@ th {
   white-space: nowrap;
   padding-left: 100%;
   animation: scroll 20s linear infinite;
-  font-size: 2vh; /* skalerer med skærmhøjde */
 }
 
 @keyframes scroll {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-100%); }
-}
-
-/* --- Footer --- */
-footer {
-  padding: 2vh 2vw;
-  background: #042234;
-  color: white;
-  text-align: center;
-  font-size: 2vh;
-}
-
-/* --- Responsiv justering --- */
-@media (max-width: 1200px) {
-  section {
-    flex: 1 1 100%;
-  }
 }
