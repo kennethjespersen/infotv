@@ -88,7 +88,7 @@ updateScreen();
 setInterval(showPage, 30 * 1000);
 
 // Opdater hele skærmen fra Google Sheets hvert 10. minut
-setInterval(updateScreen, 10 * 60 * 1000);
+setInterval(updateScreen, 1 * 60 * 1000);
 
 // --- Rullende nyheder ---
 const sheetName = "Nyheder";
