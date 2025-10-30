@@ -7,7 +7,7 @@ body {
 }
 
 header {
-  display: flex;  
+  display: flex;	
   align-items: center;    
   justify-content: space-between; 
   flex-wrap: wrap; /* Tillad header-elementer at flytte ned på små skærme */
@@ -21,13 +21,13 @@ header {
 #datetime-weather {
   display: flex;
   align-items: center;
-  gap: 5px; /* Afstand mellem dato og vejr */
+  gap: 5px; /* Afstand mellem dato og vejr, lav tallet for tættere */
 }
 
 #date, #weather {
   font-size: 1.2rem;
   font-weight: 600;
-  margin: 0; 
+  margin: 0; /* fjernet tidligere margin for at bruge gap */
 }
 
 #logo {
@@ -36,42 +36,50 @@ header {
   margin: 0 auto;       
 }
 
-/* Sektion med baggrundsbillede */
-section {
-  flex: 1 1 100%; /* fylder hele bredden */
-  max-width: 100%;
-  background: url('Baggrund.png.PNG') no-repeat center center; /* baggrundsbillede */
-  background-size: cover;  /* fylder hele sektionen */
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+#arbejdsoversigt {
+  width: 100%;           
+  border-collapse: collapse;
   overflow-x: auto;
-  position: relative; /* vigtig for overlay */
+}
+
+#arbejdsoversigt th,
+#arbejdsoversigt td {
+  border: 1px solid #ccc;
+  padding: 5px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600; /* kraftigere tekst i arbejdsoversigten */
+}
+
+footer {
+  padding: 20px 0;
+  background: #042234;
   color: white;
-  margin: 0;
-  border-radius: 0; /* ingen afrunding for fuld bredde */
+  text-align: center;
 }
 
-/* Overlay for bedre læsbarhed af sektionens header/tekst */
-section::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.25); /* let mørk overlay */
-  z-index: 0;
+.container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap; 
+  padding: 20px;
+  gap: 20px;
 }
 
-section * {
-  position: relative; /* indhold over overlay */
-  z-index: 1;
+section {
+  flex: 1 1 400px; 
+  max-width: 100%;
+  background: #fff;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  overflow-x: auto; 
 }
 
-/* Tabellen har solid hvid baggrund */
 table {
   width: 100%;
   border-collapse: collapse;
-  background-color: #fff; /* hvid baggrund */
+  background-color: #fff;
   margin-bottom: 20px;
-  border-radius: 4px; /* små hjørner */
 }
 
 th, td {
@@ -130,7 +138,7 @@ th {
   padding-left: 100%;
   animation: scroll 20s linear infinite;
   font-size: 2rem; /* stor tekst på TV */
-  font-weight: 600; 
+  font-weight: 600; /* gør nyhedsteksten lidt kraftigere */
 }
 
 @keyframes scroll {
