@@ -10,26 +10,15 @@ function updateDate() {
   dateEl.textContent = now.toLocaleString('da-DK', { dateStyle: 'full', timeStyle: 'short' });
 }
 updateDate();
-setInterval(updateDate, 1000);
+setInterval(updateDate, 1000); // opdater hvert sekund
 
-// --- Hent data fra Google Sheet JSON robust ---
+// --- Hent data fra Google Sheet JSON ---
 async function fetchSheet(sheetName) {
-  try {
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
-    const res = await fetch(url);
-    const text = await res.text();
-
-    // Robust parsing af JSONP
-    const jsonStart = text.indexOf('{');
-    const jsonEnd = text.lastIndexOf('}') + 1;
-    const json = JSON.parse(text.substring(jsonStart, jsonEnd));
-
-    if (!json.table.rows) return [];
-    return json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
-  } catch (err) {
-    console.error("Fejl ved hentning af sheet:", sheetName, err);
-    return [];
-  }
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+  const res = await fetch(url);
+  const text = await res.text();
+  const json = JSON.parse(text.substring(47, text.length - 2));
+  return json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
 }
 
 // --- Ordreoversigt med pagination ---
@@ -39,14 +28,11 @@ const rowsPerPage = 10;
 
 async function updateOrders() {
   ordreData = await fetchSheet("Ordreoversigt");
-  console.log("OrdreData:", ordreData); // Tjek om data hentes korrekt
   showPage(); // vis første side
 }
 
 function showPage() {
   const scheduleBody = document.querySelector("#schedule tbody");
-  if (!scheduleBody) return;
-
   scheduleBody.innerHTML = "";
 
   const start = currentPage * rowsPerPage;
@@ -69,14 +55,16 @@ function showPage() {
   });
 
   currentPage++;
-  if (currentPage * rowsPerPage >= ordreData.length) currentPage = 0;
+  if (currentPage * rowsPerPage >= ordreData.length) {
+    currentPage = 0; // start forfra
+  }
 }
 
 // --- Arbejdsoversigt ---
 async function updateTasks() {
   const tasks = await fetchSheet("Arbejdsoversigt");
   const tasksBody = document.querySelector("#tasks tbody");
-  if (!tasksBody) return;
+  if (!tasksBody) return; // hvis tabellen ikke findes
   tasksBody.innerHTML = "";
   tasks.forEach(row => {
     if (row[0] && row[1]) {
@@ -95,11 +83,16 @@ async function updateScreen() {
 
 // Første opdatering
 updateScreen();
-setInterval(showPage, 30 * 1000);          // Skift side i Ordreoversigt
-setInterval(updateScreen, 10 * 60 * 1000);  // Opdater hele skærmen hvert 10. minut
+
+// Skift side i Ordreoversigt hvert 30. sekund (juster efter behov)
+setInterval(showPage, 30 * 1000);
+
+// Opdater hele skærmen fra Google Sheets hvert 10. minut
+setInterval(updateScreen, 10 * 60 * 1000);
 
 // --- Rullende nyheder ---
-const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Nyheder`;
+const sheetName = "Nyheder";
+const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
 
 async function loadNews() {
   try {
@@ -129,7 +122,7 @@ async function hentVejr() {
     const icon = data.weather[0].icon;
 
     document.getElementById("city").innerText = CITY;
-    document.getElementById("temp").innerText = `${temp}°C`;
+    document.getElementById("temp").innerText = `Indlæser vejr... ${temp}°C`;
     document.getElementById("desc").innerText = desc;
     document.getElementById("weather-icon").src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
     document.getElementById("weather-icon").alt = desc;
@@ -142,5 +135,6 @@ async function hentVejr() {
   }
 }
 
+// Opdater vejret én gang og derefter hvert 1. minut
 hentVejr();
-setInterval(hentVejr, 10 * 60 * 1000); // Opdater hvert 10. minut
+setInterval(hentVejr, 1 * 60 * 1000);
