@@ -13,9 +13,10 @@ setInterval(updateDate, 60000);
 // ---- VEJRUDSIGT ----
 async function updateWeather() {
   const weatherEl = document.getElementById("weather");
-  if (!weatherEl) return; // Hvis elementet ikke findes i HTML, gør intet
+  if (!weatherEl) return; // Hvis elementet ikke findes i HTML
+
   try {
-    // Koordinater for Danmark (Lunderskov)
+    // Koordinater for Lunderskov
     const lat = 55.4838;
     const lon = 9.2992;
 
@@ -27,9 +28,12 @@ async function updateWeather() {
     const wind = Math.round(data.current_weather.windspeed);
     const icon = data.current_weather.weathercode;
 
-    // Enkel beskrivelse baseret på Open-Meteo weather codes
+    const hour = new Date().getHours(); // Hent nuværende time
+    const isNight = hour >= 20 || hour < 7; // Nat mellem 20:00-06:59
+
+    // Beskrivelse baseret på Open-Meteo weather codes
     const weatherIcons = {
-      0: "☀️ Klart",
+      0: isNight ? "🌙 Klart" : "☀️ Klart", // ☀️ fra 07:00-19:59, 🌙 ellers
       1: "🌤️ Let skyet",
       2: "⛅ Delvist skyet",
       3: "☁️ Overskyet",
