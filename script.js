@@ -15,9 +15,9 @@ async function updateWeather() {
   const weatherEl = document.getElementById("weather");
   if (!weatherEl) return; // Hvis elementet ikke findes i HTML, gør intet
   try {
-    // Koordinater for Danmark (fx København)
-    const lat = 55.6761;
-    const lon = 12.5683;
+    // Koordinater for Danmark (Lunderskov)
+    const lat = 55.4838;
+    const lon = 9.2992;
 
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
     const res = await fetch(url);
