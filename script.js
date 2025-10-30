@@ -19,26 +19,42 @@ async function fetchSheet(sheetName) {
   return json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
 }
 
-// Opdater skærm
-async function updateScreen() {
-  // Ordreoversigt
-  const ordreoversigt = await fetchSheet("Ordreoversigt");
+// --- Pagination variabler ---
+let ordreData = [];
+let currentPage = 0;
+const rowsPerPage = 10;
+
+// Vis en side af ordreoversigten
+function showPage(page) {
   const scheduleBody = document.querySelector("#schedule tbody");
   scheduleBody.innerHTML = "";
-  ordreoversigt.forEach(row => {
+
+  const start = page * rowsPerPage;
+  const end = start + rowsPerPage;
+  const pageData = ordreData.slice(start, end);
+
+  pageData.forEach(row => {
     if (row[0] && row[1] && row[2] && row[3] && row[4]) {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-      <td>${row[0]}</td>
-      <td>${row[1]}</td>
-      <td>${row[2]}</td>
-      <td>${row[3]}</td>
-      <td>${row[4]}</td>
-      <td>${row[5] ? row[5] : ""}</td> <!-- Klar -->
-    `;
-    scheduleBody.appendChild(tr);
-  }
-});
+        <td>${row[0]}</td>
+        <td>${row[1]}</td>
+        <td>${row[2]}</td>
+        <td>${row[3]}</td>
+        <td>${row[4]}</td>
+        <td>${row[5] ? row[5] : ""}</td> <!-- Klar -->
+      `;
+      scheduleBody.appendChild(tr);
+    }
+  });
+}
+
+// Opdater skærm
+async function updateScreen() {
+  // Ordreoversigt
+  ordreData = await fetchSheet("Ordreoversigt");
+  currentPage = 0;      // Start altid fra første side efter opdatering
+  showPage(currentPage);
 
   // Arbejdsoversigt
   const tasks = await fetchSheet("Arbejdsoversigt");
@@ -56,6 +72,17 @@ async function updateScreen() {
 // Første opdatering og derefter hvert 2. minut
 updateScreen();
 setInterval(updateScreen, 120000);
+
+// Skift side i ordreoversigten hvert minut
+setInterval(() => {
+  if (ordreData.length === 0) return;
+
+  const totalPages = Math.ceil(ordreData.length / rowsPerPage);
+  currentPage++;
+  if (currentPage >= totalPages) currentPage = 0;
+
+  showPage(currentPage);
+}, 60000);
 
 // Rullende nyheder
 const sheetName = "Nyheder";
