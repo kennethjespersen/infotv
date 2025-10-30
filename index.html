@@ -8,8 +8,12 @@
 <body>
   <header>
     <img src="logo.svg" alt="" id="logo.svg" style="height:100px; width:auto;">
-    <p id="date"></p>
-	<p id="weather"></p>
+
+    <!-- Ny container for dato og vejr -->
+    <div id="datetime-weather">
+      <span id="date"></span>
+      <span id="weather"></span>
+    </div>
   </header>
   
   <div class="container">
@@ -29,15 +33,12 @@
         <tbody></tbody>
       </table>
     </section>
+  </div>
 
-<div id="nyheder-wrapper">
-  <div id="nyheder">Indlæser nyheder...</div>
-</div>
-
+  <div id="nyheder-wrapper">
+    <div id="nyheder">Indlæser nyheder...</div>
+  </div>
 
 <script src="script.js"></script>
 </body>
 </html>
-
-
-
