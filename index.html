@@ -4,13 +4,55 @@
 <meta charset="UTF-8">
 <title>Infoskærm</title>
 <link rel="stylesheet" href="style.css">
+<style>
+  /* --- Vejr + dato/klokke øverst i højre hjørne --- */
+  #top-right-weather {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    text-align: right;
+    color: white;
+    font-family: Arial, sans-serif;
+    background: rgba(0,0,0,0.3);
+    padding: 15px;
+    border-radius: 8px;
+    min-width: 180px;
+  }
+  #top-right-weather h3, #top-right-weather p {
+    margin: 2px 0;
+  }
+  /* --- Vejr-info med ikon --- */
+  #weather-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  #weather-icon {
+    width: 50px;
+    height: 50px;
+  }
+</style>
 </head>
 <body>
   <header>
-    <img src="logo.svg" alt="" id="logo.svg" style="height:100px; width:auto;">
+    <img src="logo.svg" alt="Logo" id="logo.svg" style="height:100px; width:auto;">
     <p id="date"></p>
   </header>
-  
+
+  <!-- Vejr + dato/klokke øverst i højre hjørne -->
+  <div id="top-right-weather">
+    <p id="clock">Indlæser klokke...</p>
+    <div id="weather-info">
+      <div>
+        <h3 id="city">Lunderskov</h3>
+        <p id="temp">Indlæser vejr...</p>
+        <p id="desc"></p>
+      </div>
+      <img id="weather-icon" src="" alt="">
+    </div>
+  </div>
+
   <div class="container">
     <section id="ordreoversigt">
       <h2>Ordreoversigt</h2>
@@ -29,14 +71,12 @@
       </table>
     </section>
 
-<div id="nyheder-wrapper">
-  <div id="nyheder">Indlæser nyheder...</div>
-</div>
+    <div id="nyheder-wrapper">
+      <div id="forecast"></div> <!-- 5-dages vejrprognose kan indsættes her senere -->
+      <div id="nyheder">Indlæser nyheder...</div>
+    </div>
+  </div>
 
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
-
-
-
