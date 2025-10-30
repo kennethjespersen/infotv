@@ -7,53 +7,58 @@ body {
 }
 
 header {
-  display: flex;	/* gør header til fleksibel container */
-  align-items: center;    /* centrerer vertikalt */
-  justify-content: space-between; /* logo til venstre, andre elementer til højre */
-  padding: 50px 50px;	 /* afstand fra kant: top/bund 15px, venstre/højre 30px */
+  display: flex;	
+  align-items: center;    
+  justify-content: space-between; 
+  flex-wrap: wrap; /* Tillad header-elementer at flytte ned på små skærme */
+  padding: 20px;
   background: #042234;
   color: white;
   text-align: center;
-  padding: 0px 20;
-}
-
-#arbejdsoversigt {
-  width: 300px;           /* total bredde på tabellen, kan justeres */
-  border-collapse: collapse;
-}
-
-#arbejdsoversigt th,
-arbejdsoversigt td {
-  width: 10%;             /* begge kolonner tager halvdelen af tabellen */
-  border: 1px solid #ccc;
-  padding: 5px;
-  text-align: left;
-  font-size: 14px;        /* mindre tekst, hvis ønsket */
-}
-
-footer {
-  padding: 10px 20px;
-  background: #042234;
-  color: white;
-  text-align: center;
-  padding: 20px 0;
 }
 
 #logo {
-  height: 20px;        /* Juster størrelsen på logoet */
-  display: block;
+  max-height: 100px;        /* Større logo, skalerbart */
   width: auto;
-  margin: 0 auto;       /* Center logoet */
+  margin: 0 auto;       
+}
+
+#arbejdsoversigt {
+  width: 100%;           
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+
+#arbejdsoversigt th,
+#arbejdsoversigt td {
+  border: 1px solid #ccc;
+  padding: 5px;
+  text-align: left;
+  font-size: 14px;
+}
+
+footer {
+  padding: 20px 0;
+  background: #042234;
+  color: white;
+  text-align: center;
 }
 
 .container {
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap; /* Kolonner kan flytte ned */
   padding: 20px;
+  gap: 20px;
 }
 
 section {
-  width: 45%;
+  flex: 1 1 400px; /* minimum 400px bredde, skalerer */
+  max-width: 100%;
+  background: #fff;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  overflow-x: auto; /* Scroll ved små skærme */
 }
 
 table {
@@ -61,13 +66,13 @@ table {
   border-collapse: collapse;
   background-color: #fff;
   margin-bottom: 20px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 th, td {
   border: 1px solid #ccc;
   padding: 8px 12px;
   text-align: left;
+  font-size: 1rem; /* skalerer naturligt */
 }
 
 th {
@@ -77,8 +82,15 @@ th {
 
 #schedule th:last-child,
 #schedule td:last-child {
-  width: 80px;   /* juster efter behov */
-  text-align: center; /* evt. centrér indholdet */
+  width: 80px;
+  text-align: center;
+}
+
+/* Sidetal under tabellen */
+#pageIndicator {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 10px;
 }
 
 #news {
@@ -90,7 +102,7 @@ th {
 }
 
 #nyheder-wrapper {
-  position: fixed;          /* holder nyhederne i bunden */
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -113,4 +125,39 @@ th {
 @keyframes scroll {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-100%); }
+}
+
+/* --- Medieforespørgsler for små skærme --- */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  #logo {
+    max-height: 70px;
+  }
+
+  .container {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  section {
+    flex: 1 1 100%;
+  }
+
+  th, td {
+    font-size: 0.9rem;
+    padding: 6px;
+  }
+
+  #nyheder-wrapper {
+    height: 30px;
+  }
+
+  #nyheder {
+    font-size: 0.9rem;
+  }
 }
