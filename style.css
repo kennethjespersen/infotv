@@ -20,9 +20,39 @@ header {
   padding: 1vh 2vw;
 }
 
+/* --- Logo --- */
 #logo {
   max-height: 8vh; /* logo skalerer med højde */
   width: auto;
+}
+
+/* --- Vejr + dato/klokke i header --- */
+#top-right-weather {
+  display: flex;
+  align-items: center;
+  gap: 2vw; /* afstand mellem dato/klokke og vejr */
+  color: white;
+  font-size: 2vh; /* skalerer med skærmhøjde */
+}
+
+#weather-info {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+  background: rgba(0,0,0,0.3);
+  padding: 0.5vh 1vw;
+  border-radius: 1vh;
+}
+
+#weather-icon {
+  width: 4vh;  /* skalerer med skærmhøjde */
+  height: 4vh;
+}
+
+#clock {
+  margin: 0;
+  white-space: nowrap;
+  font-size: 2vh;
 }
 
 /* --- Container og sektioner --- */
