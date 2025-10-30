@@ -4,41 +4,11 @@
 <meta charset="UTF-8">
 <title>Infoskærm</title>
 <link rel="stylesheet" href="style.css">
-<style>
-  /* --- Vejr + dato/klokke øverst i højre hjørne --- */
-  #top-right-weather {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    text-align: right;
-    color: white;
-    font-family: Arial, sans-serif;
-    background: rgba(0,0,0,0.3);
-    padding: 15px;
-    border-radius: 8px;
-    min-width: 200px;
-  }
-  #top-right-weather h3, #top-right-weather p {
-    margin: 2px 0;
-  }
-  /* --- Vejr-info med ikon --- */
-  #weather-info {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-  #weather-icon {
-    width: 50px;
-    height: 50px;
-  }
-</style>
 </head>
-
 <body>
   <header>
-    <img src="logo.svg" alt="Logo" id="logo.svg" style="height:100px; width:auto;">
-    <!-- gammel dato/klokke fjernet -->
+    <img src="logo.svg" alt="" id="logo.svg" style="height:100px; width:auto;">
+    <p id="date"></p>
   </header>
   
   <div class="container">
@@ -52,78 +22,21 @@
             <th>Kunde</th>
             <th>Ansvarlig</th>
             <th>Leveringsdato</th>
-            <th>Klar</th>
+	    <th>Klar</th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
     </section>
 
-    <div id="nyheder-wrapper">
-      <div id="forecast"></div> <!-- 5-dages vejrprognose kan indsættes her senere -->
-      <div id="nyheder">Indlæser nyheder...</div>
-    </div>
-  </div>
+<div id="nyheder-wrapper">
+  <div id="nyheder">Indlæser nyheder...</div>
+</div>
 
-  <!-- Vejr + dato/klokke øverst i højre hjørne -->
-  <div id="top-right-weather">
-    <p id="clock">Indlæser klokke...</p>
-    <div id="weather-info">
-      <div>
-        <h3 id="city">Lunderskov</h3>
-        <p id="temp">Indlæser vejr...</p>
-        <p id="desc"></p>
-      </div>
-      <img id="weather-icon" src="" alt="">
-    </div>
-  </div>
 
-  <script src="script.js"></script>
-
-  <!-- Vejr + klokke script -->
-  <script>
-    const apiKey = "1479d27b5af8ba5ba10105874505ff92"; // din OpenWeather nøgle
-    const city = "Lunderskov";
-
-    // --- Hent vejr i Lunderskov ---
-    async function hentVejr() {
-      try {
-        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=da&appid=${apiKey}`);
-        if (!res.ok) throw new Error("API-fejl");
-        const data = await res.json();
-
-        const temp = Math.round(data.main.temp);
-        const desc = data.weather[0].description;
-        const icon = data.weather[0].icon;
-
-        document.getElementById("city").innerText = city;
-        document.getElementById("temp").innerText = `${temp}°C`;
-        document.getElementById("desc").innerText = desc;
-        document.getElementById("weather-icon").src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
-        document.getElementById("weather-icon").alt = desc;
-
-      } catch(err) {
-        console.error(err);
-        document.getElementById("temp").innerText = "Kunne ikke hente vejr 🌧️";
-        document.getElementById("desc").innerText = "";
-        document.getElementById("weather-icon").src = "";
-      }
-    }
-
-    hentVejr();
-    setInterval(hentVejr, 10*60*1000); // opdater hvert 10. minut
-
-    // --- Opdater dato og klokkeslæt ---
-    function opdaterKlokke() {
-      const now = new Date();
-      const options = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
-      const dato = now.toLocaleDateString('da-DK', options);
-      const tid = now.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      document.getElementById("clock").innerText = `${dato} | ${tid}`;
-    }
-
-    opdaterKlokke();
-    setInterval(opdaterKlokke, 1000); // opdater hvert sekund
-  </script>
+<script src="script.js"></script>
 </body>
 </html>
+
+
+
