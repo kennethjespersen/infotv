@@ -137,4 +137,4 @@ async function hentVejr() {
 
 // Opdater vejret én gang og derefter hvert 10. minut
 hentVejr();
-setInterval(hentVejr, 10 * 60 * 1000);
+setInterval(hentVejr, 1 * 60 * 1000);
