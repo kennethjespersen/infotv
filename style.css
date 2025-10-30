@@ -40,7 +40,7 @@ header {
 section {
   flex: 1 1 100%; /* fylder hele bredden */
   max-width: 100%;
-  background: url('Baggrund.png') no-repeat center center; /* baggrundsbillede */
+  background: url('Baggrund.png.PNG') no-repeat center center; /* baggrundsbillede */
   background-size: cover;  /* fylder hele sektionen */
   padding: 20px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
