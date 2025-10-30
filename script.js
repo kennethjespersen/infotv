@@ -1,7 +1,7 @@
-// ---- INDSTIL DIT SHEET-ID HER ----
+// ---- INDSTIL DIT SHEET-ID HER ---- 
 const SHEET_ID = "1oZCqUjYE54ePWnpYqARtklEBBq1wwl3dKOyF2TmcCtU";
 
-// Live dato og tid
+// ---- Live dato og tid ----
 function updateDate() {
   const dateEl = document.getElementById('date');
   const now = new Date();
@@ -10,7 +10,52 @@ function updateDate() {
 updateDate();
 setInterval(updateDate, 60000);
 
-// Hent data fra Google Sheet JSON
+// ---- VEJRUDSIGT ----
+async function updateWeather() {
+  const weatherEl = document.getElementById("weather");
+  if (!weatherEl) return; // Hvis elementet ikke findes i HTML, gør intet
+  try {
+    // Koordinater for Danmark (fx København)
+    const lat = 55.6761;
+    const lon = 12.5683;
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    const temp = Math.round(data.current_weather.temperature);
+    const wind = Math.round(data.current_weather.windspeed);
+    const icon = data.current_weather.weathercode;
+
+    // Enkel beskrivelse baseret på Open-Meteo weather codes
+    const weatherIcons = {
+      0: "☀️ Klart",
+      1: "🌤️ Let skyet",
+      2: "⛅ Delvist skyet",
+      3: "☁️ Overskyet",
+      45: "🌫️ Tåge",
+      48: "🌫️ Tåge",
+      51: "🌦️ Finregn",
+      61: "🌧️ Regn",
+      63: "🌧️ Kraftig regn",
+      71: "❄️ Sne",
+      95: "⛈️ Torden"
+    };
+
+    const desc = weatherIcons[icon] || "🌡️";
+
+    weatherEl.textContent = `${desc} · ${temp}°C · Vind: ${wind} km/t`;
+  } catch (err) {
+    console.error("Fejl ved hentning af vejr:", err);
+    weatherEl.textContent = "Vejrdata utilgængelige";
+  }
+}
+
+// Første kald + opdater hver 15. minut
+updateWeather();
+setInterval(updateWeather, 900000);
+
+// ---- Hent data fra Google Sheet JSON ----
 async function fetchSheet(sheetName) {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
   const res = await fetch(url);
@@ -52,7 +97,6 @@ function showPage(page) {
   const totalPages = Math.ceil(ordreData.length / rowsPerPage);
   let pageIndicator = document.getElementById("pageIndicator");
   if (!pageIndicator) {
-    // Hvis elementet ikke findes, opret det under tabellen
     pageIndicator = document.createElement("p");
     pageIndicator.id = "pageIndicator";
     pageIndicator.style.textAlign = "center";
@@ -63,11 +107,11 @@ function showPage(page) {
   pageIndicator.textContent = `Side ${page + 1} af ${totalPages}`;
 }
 
-// Opdater skærm
+// ---- Opdater skærm ----
 async function updateScreen() {
   // Ordreoversigt
   ordreData = await fetchSheet("Ordreoversigt");
-  currentPage = 0; // Start altid fra første side efter opdatering
+  currentPage = 0;
   showPage(currentPage);
 
   // Arbejdsoversigt
@@ -98,7 +142,7 @@ setInterval(() => {
   showPage(currentPage);
 }, 60000);
 
-// Rullende nyheder
+// ---- Rullende nyheder ----
 const sheetName = "Nyheder";
 const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
 
