@@ -1,16 +1,18 @@
 // ---- INDSTIL DIT SHEET-ID HER ----
 const SHEET_ID = "1oZCqUjYE54ePWnpYqARtklEBBq1wwl3dKOyF2TmcCtU";
+const CITY = "Lunderskov";
+const WEATHER_API_KEY = "1479d27b5af8ba5ba10105874505ff92";
 
-// Live dato og tid
+// --- Live dato og klokke ---
 function updateDate() {
   const dateEl = document.getElementById('date');
   const now = new Date();
   dateEl.textContent = now.toLocaleString('da-DK', { dateStyle: 'full', timeStyle: 'short' });
 }
 updateDate();
-setInterval(updateDate, 60000);
+setInterval(updateDate, 1000); // opdater hvert sekund
 
-// Hent data fra Google Sheet JSON
+// --- Hent data fra Google Sheet JSON ---
 async function fetchSheet(sheetName) {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
   const res = await fetch(url);
@@ -52,7 +54,6 @@ function showPage() {
     }
   });
 
-  // Næste side for næste opdatering
   currentPage++;
   if (currentPage * rowsPerPage >= ordreData.length) {
     currentPage = 0; // start forfra
@@ -108,3 +109,31 @@ async function loadNews() {
 
 loadNews();
 setInterval(loadNews, 60000);
+
+// --- Vejr ---
+async function hentVejr() {
+  try {
+    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CITY}&units=metric&lang=da&appid=${WEATHER_API_KEY}`);
+    if (!res.ok) throw new Error("API-fejl");
+    const data = await res.json();
+
+    const temp = Math.round(data.main.temp);
+    const desc = data.weather[0].description;
+    const icon = data.weather[0].icon;
+
+    document.getElementById("city").innerText = CITY;
+    document.getElementById("temp").innerText = `${temp}°C`;
+    document.getElementById("desc").innerText = desc;
+    document.getElementById("weather-icon").src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
+    document.getElementById("weather-icon").alt = desc;
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("temp").innerText = "Kunne ikke hente vejr 🌧️";
+    document.getElementById("desc").innerText = "";
+    document.getElementById("weather-icon").src = "";
+  }
+}
+
+hentVejr();
+setInterval(hentVejr, 10 * 60 * 1000); // opdater hvert 10. minut
