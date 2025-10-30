@@ -10,14 +10,15 @@ html, body {
   font-size: 2vh; /* skalerer med skærmhøjde */
 }
 
-/* --- Header med logo --- */
+/* --- Header med vejr og klokke --- */
 header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: center;            /* Vertikal centrering */
+  justify-content: space-between;  /* Logo til venstre, vejr/klokke til højre */
   background: #042234;
   color: white;
   padding: 1vh 2vw;
+  position: relative;
 }
 
 /* --- Logo --- */
@@ -30,22 +31,22 @@ header {
 #top-right-weather {
   display: flex;
   align-items: center;
-  gap: 2vw; /* afstand mellem dato/klokke og vejr */
+  gap: 1vw; /* afstand mellem dato/klokke og vejr */
+  background: rgba(0,0,0,0.3);
+  padding: 0.5vh 1vw;
+  border-radius: 5px;
   color: white;
   font-size: 2vh; /* skalerer med skærmhøjde */
 }
 
-#weather-info {
+#top-right-weather div {
   display: flex;
-  align-items: center;
-  gap: 1vw;
-  background: rgba(0,0,0,0.3);
-  padding: 0.5vh 1vw;
-  border-radius: 1vh;
+  flex-direction: column;
+  text-align: right;
 }
 
 #weather-icon {
-  width: 4vh;  /* skalerer med skærmhøjde */
+  width: 4vh;  /* passer til header-højden */
   height: 4vh;
 }
 
