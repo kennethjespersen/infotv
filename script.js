@@ -136,4 +136,4 @@ async function hentVejr() {
 }
 
 hentVejr();
-setInterval(hentVejr, 10 * 60 * 1000); // opdater hvert 10. minut
+setInterval(hentVejr, 1 * 60 * 1000); // opdater hvert 10. minut
