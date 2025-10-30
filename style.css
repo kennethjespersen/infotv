@@ -101,6 +101,7 @@ th {
   margin: 5px 0;
 }
 
+/* Nyhedsbar */
 #nyheder-wrapper {
   position: fixed;
   bottom: 0;
@@ -120,6 +121,7 @@ th {
   white-space: nowrap;
   padding-left: 100%;
   animation: scroll 20s linear infinite;
+  font-size: 2rem; /* større tekst for TV */
 }
 
 @keyframes scroll {
@@ -158,6 +160,6 @@ th {
   }
 
   #nyheder {
-    font-size: 0.9rem;
+    font-size: 1rem; /* mindre tekst på tablet/mobil */
   }
 }
