@@ -48,7 +48,7 @@ async function updateWeather() {
 
     const desc = weatherIcons[icon] || "🌡️";
 
-    weatherEl.textContent = `${desc} · ${temp}°C · Vind: ${wind} km/t`;
+    weatherEl.textContent = `${desc} · ${temp}°C · Vind: ${wind} m/s`;
   } catch (err) {
     console.error("Fejl ved hentning af vejr:", err);
     weatherEl.textContent = "Vejrdata utilgængelige";
