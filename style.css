@@ -183,30 +183,6 @@ th {
   #nyheder-wrapper {
     height: 30px;
   }
-  /* TV 2 NEWS bar */
-#tv2-wrapper {
-  position: fixed;
-  bottom: 40px; /* Lige over dine egne nyheder */
-  left: 0;
-  width: 100%;
-  height: 40px;
-  background-color: rgba(34,34,34,0.9); /* lidt transparent */
-  color: white;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  padding-left: 10px;
-  z-index: 2000; /* højere end din eksisterende nyhedsbar */
-}
-
-#tv2-news {
-  display: inline-block;
-  white-space: nowrap;
-  padding-left: 100%;
-  animation: scroll 30s linear infinite;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
 
   #nyheder {
     font-size: 1rem; /* mindre tekst på mobil/tablet */
