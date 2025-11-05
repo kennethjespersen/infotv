@@ -20,7 +20,7 @@ async function updateWeather() {
     const lat = 55.4838;
     const lon = 9.2992;
 
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&windspeed_unit=ms`;
     const res = await fetch(url);
     const data = await res.json();
 
