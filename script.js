@@ -162,28 +162,6 @@ async function loadNews() {
     document.getElementById("nyheder").innerText = "Kan ikke indlæse nyheder.";
   }
 }
-async function loadTV2News() {
-  const tv2Url = "https://feeds.tv2.dk/rss/news";
-  const tv2El = document.getElementById("tv2-news");
-
-  try {
-    const res = await fetch(tv2Url);
-    const text = await res.text();
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(text, "text/xml");
-    const items = xml.querySelectorAll("item > title");
-    const titles = Array.from(items).map(el => el.textContent.trim()).slice(0, 10);
-
-    tv2El.innerText = titles.join("  |  ");
-  } catch (err) {
-    console.error("Kan ikke hente TV 2 NEWS:", err);
-    tv2El.innerText = "Kan ikke indlæse TV 2 NEWS.";
-  }
-}
-
-// Første kald + opdater hvert 5. minut
-loadTV2News();
-setInterval(loadTV2News, 300000);
 
 loadNews();
 setInterval(loadNews, 60000);
